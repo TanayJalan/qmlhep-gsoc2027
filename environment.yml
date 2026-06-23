@@ -1,0 +1,18 @@
+yaml
+name: qmlhep
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy
+  - matplotlib
+  - jupyter
+  - pip
+  - pip:
+    - torch
+    - torchvision
+    - pennylane
+    - torch_geometric
+    - scikit-learn
+    - tqdm

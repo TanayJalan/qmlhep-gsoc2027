@@ -1,7 +1,7 @@
 | Phase | Status | Milestone | Date Completed |
 |-------|--------|-----------|----------------|
-| Phase 1: Python & NumPy | 🔄 In progress | Backprop from scratch | — |
-| Phase 2: PyTorch | ⬜ Not started | CNN >80% CIFAR-10 | — |
+| Phase 1: Python & NumPy | ✅ Completed | Backprop from scratch | 14th Aug 2026 |
+| Phase 2: PyTorch | 🔄 In Progress | CNN >80% CIFAR-10 | — |
 | Phase 3: Transformers | ⬜ Not started | Mini-ViT on MNIST | — |
 | Phase 4: Quantum basics | ⬜ Not started | Bell state + VQC | — |
 | Phase 5: PennyLane | ⬜ Not started | Hybrid Iris classifier | — |
@@ -22,3 +22,4 @@
 | 100 NumPy Exercises | github.com/rougier/numpy-100 | NumPy practice |
 | Corey Schafer OOP | youtube.com/@coreyms | OOP patterns |
 | 3Blue1Brown Neural Nets | youtube.com/3b1b | Backprop intuition |
+

@@ -1,8 +1,8 @@
 | Phase | Status | Milestone | Date Completed |
 |-------|--------|-----------|----------------|
 | Phase 1: Python & NumPy | ✅ Completed | Backprop from scratch | 14th Aug 2026 |
-| Phase 2: PyTorch | 🔄 In Progress | CNN >80% CIFAR-10 | — |
-| Phase 3: Transformers | ⬜ Not started | Mini-ViT on MNIST | — |
+| Phase 2: PyTorch | ✅ Completed | CNN >80% CIFAR-10 | 2nd Sep 2026 |
+| Phase 3: Transformers | 🔄 In Progress | Mini-ViT on MNIST | — |
 | Phase 4: Quantum basics | ⬜ Not started | Bell state + VQC | — |
 | Phase 5: PennyLane | ⬜ Not started | Hybrid Iris classifier | — |
 | Phase 6: HEP papers | ⬜ Not started | Reproduce baseline | — |

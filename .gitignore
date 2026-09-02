@@ -15,3 +15,4 @@ data/raw/
 *.npz
 *.npy
 wandb/
+Implementation_Plan_Claude.md

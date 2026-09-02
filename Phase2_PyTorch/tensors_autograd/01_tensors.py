@@ -93,16 +93,90 @@ x_auto = x.reshape(6, -1)
 print(f"  .reshape(6, -1)   shape: {x_auto.shape}  (-1 inferred as 4)")
 
 # flatten
-print(f"  .flatten()        shape: {x_3d.flatten().shape}")
+print(f".flatten() shape: {x_3d.flatten().shape}")
 
 # squeeze / unsqueeze (PyTorch names for squeeze / expand_dims)
 img  = torch.randn(28, 28)
 img_batched = img.unsqueeze(0)          # add batch dim at position 0
 print(f"\n  Image:          {img.shape}")
-print(f"  .unsqueeze(0):  {img_batched.shape}   ← add batch dim")
-print(f"  .squeeze(0):    {img_batched.squeeze(0).shape}  ← remove it")
+print(f"  .unsqueeze(0):  {img_batched.shape}   <- add batch dim")
+print(f"  .squeeze(0):    {img_batched.squeeze(0).shape}  <- remove it")
 
 # permute (torch version of np.transpose for N-D)
 feat = torch.randn(2, 3, 4)
 print(f"\n  (2,3,4).permute(0,2,1): {feat.permute(0,2,1).shape}")
+
+# Section - 4 Math operations
+
+print(' Section 4')
+
+a = torch.tensor([1.0, 2.0, 3.0])
+b = torch.tensor([4.0, 5.0, 6.0])
+
+print(f"  a:{a.tolist()}")
+print(f"  b:           {b.tolist()}")
+print(f"  a + b:       {(a + b).tolist()}")
+print(f"  a * b:       {(a * b).tolist()}   (element-wise)")
+print(f"  a @ b:       {(a @ b).item()}     (dot product)")
+print(f"  a.dot(b):    {a.dot(b).item()}")
+
+# Matrix multiply
+A = torch.randn(3, 4)
+B = torch.randn(4, 5)
+C = A @ B                               # (3, 5)
+print(f"\n  (3,4) @ (4,5) = {C.shape}")
+
+# Batched matmul
+A3 = torch.randn(8, 3, 4)
+B3 = torch.randn(8, 4, 5)
+C3 = torch.bmm(A3, B3)                 # (8, 3, 5)
+print(f"bmm (8,3,4) × (8,4,5) = {C3.shape}")
+
+# Reduction ops
+t = torch.randn(4, 5)
+print(f"\n  t.sum():              {t.sum().item():.4f}")
+print(f"  t.mean():             {t.mean().item():.4f}")
+print(f"  t.sum(dim=0).shape:   {t.sum(dim=0).shape}   (per column)")
+print(f"  t.mean(dim=1).shape:  {t.mean(dim=1).shape}  (per row)")
+print(f"  keepdim=True shape:   {t.mean(dim=1, keepdim=True).shape}")
+
+
+t2 = torch.ones(3)
+t2.add_(1.0)                            # t2 += 1 in-place
+print(f"\n  In-place add_ result: {t2.tolist()}")
+print(f" Avoid in-place on tensors that require grad (breaks autograd)")
+
+print(' Section -5')
+
+t_cpu = torch.randn(3, 3)
+t_dev = t_cpu.to(DEVICE)
+print(f"  CPU tensor device:    {t_cpu.device}")
+print(f"  After .to(device):    {t_dev.device}")
+
+# Checking if a tensor is on the right device
+print(f"\n  t_dev.is_cuda:  {t_dev.is_cuda}")
+print(f"  t_dev.device:   {t_dev.device}")
+
+# Back to CPU for NumPy conversion
+t_back = t_dev.cpu()
+arr    = t_back.numpy()
+print(f"\n  .cpu().numpy() -> np.ndarray shape: {arr.shape}")
+
+# section 6
+
+print('Section 6')
+
+
+arr = np.array([1.0, 2.0, 3.0])
+t   = torch.from_numpy(arr)
+print(f"  np -> torch: {t.tolist()}  dtype: {t.dtype}")
+
+# Shared memory: modifying arr changes t
+arr[0] = 99.0
+print(f"After arr[0]=99: tensor = {t.tolist()}  shared memory!")
+
+# Safe conversion back
+t2  = torch.randn(4)
+arr2 = t2.detach().numpy()
+print(f"\n  torch -> np (detach): {arr2.round(4)}")
 

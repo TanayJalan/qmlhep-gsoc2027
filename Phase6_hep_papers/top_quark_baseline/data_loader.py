@@ -238,18 +238,26 @@ def get_jet_dataloaders(n_train: int = 2000,
                          mode:    str = 'sequence',
                          top_k:   int = 20,
                          batch_size: int = 64,
-                         data_dir: str = None) -> tuple:
+                         data_dir: str = 'auto') -> tuple:
     """
     Build train/val/test DataLoaders for jet classification.
 
     Args:
         data_dir: path to directory containing train.h5, val.h5, test.h5
-                  (the real Zenodo dataset). If None, uses synthetic data.
+                  (the real Zenodo dataset). If 'auto' (default), automatically checks
+                  for ../data containing train.h5. If 'synthetic', uses synthetic data.
 
     Returns:
         train_loader, val_loader, test_loader, sample_shape
     """
-    if data_dir is not None:
+    if data_dir == 'auto' or data_dir is None:
+        default_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+        if os.path.isdir(default_dir) and os.path.isfile(os.path.join(default_dir, 'train.h5')):
+            data_dir = default_dir
+        else:
+            data_dir = None
+
+    if data_dir is not None and data_dir != 'synthetic':
         train_h5 = os.path.join(data_dir, 'train.h5')
         val_h5   = os.path.join(data_dir, 'val.h5')
         test_h5  = os.path.join(data_dir, 'test.h5')
@@ -290,7 +298,7 @@ def get_jet_dataloaders(n_train: int = 2000,
     X_test  = normalise(X_test)
 
     # JetDataset sorts by pT col: col 6 for synthetic, col 4 for real (pT appended)
-    pt_col = 4 if data_dir is not None else 6
+    pt_col = 4 if (data_dir is not None and data_dir != 'synthetic') else 6
     ds_train = JetDataset(X_train, y_train, mode=mode, top_k=top_k, pt_col=pt_col)
     ds_val   = JetDataset(X_val,   y_val,   mode=mode, top_k=top_k, pt_col=pt_col)
     ds_test  = JetDataset(X_test,  y_test,  mode=mode, top_k=top_k, pt_col=pt_col)
@@ -307,46 +315,37 @@ def get_jet_dataloaders(n_train: int = 2000,
     return train_loader, val_loader, test_loader, sample_x.shape
 
 if __name__ == "__main__":
+    default_data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+    has_real_data = os.path.isdir(default_data_dir) and os.path.isfile(os.path.join(default_data_dir, 'train.h5'))
 
-    print("Synthetic Jet Dataset")
+    if has_real_data:
+        print(f"Loading Real Zenodo Dataset from: {default_data_dir}")
+        train_l, val_l, test_l, sample_shape = get_jet_dataloaders(
+            n_train=2000, n_val=500, n_test=500,
+            mode='sequence', top_k=20, batch_size=32,
+            data_dir=default_data_dir
+        )
+        print(f"\n  Sample shape per jet: {sample_shape}  (top_k=20, features: E, PX, PY, PZ, pT)")
+        print(f"  Train batches: {len(train_l)}")
+        print(f"  Val   batches: {len(val_l)}")
+        print(f"  Test  batches: {len(test_l)}")
 
-    X, y = generate_synthetic_jets(n_jets=1000, n_constituents=30)
+        xb, yb = next(iter(train_l))
+        print(f"\n  First batch:")
+        print(f"    X: {xb.shape}  y: {yb.shape}")
+        print(f"    Label distribution: {yb.sum().item()} top / {(yb==0).sum().item()} QCD")
+    else:
+        print("Real dataset not detected; testing synthetic generator:")
+        X, y = generate_synthetic_jets(n_jets=1000, n_constituents=30)
+        print(f"\n  X shape: {X.shape}   (jets, constituents, features)")
+        print(f"  y shape: {y.shape}")
+        print(f"  Labels:  {np.bincount(y).tolist()}  (QCD, Top)")
 
-    print(f"\n  X shape: {X.shape}   (jets, constituents, features)")
-    print(f"  y shape: {y.shape}")
-    print(f"  Labels:  {np.bincount(y).tolist()}  (QCD, Top)")
-    print(f"\n  Feature names: {FEATURES}")
-    print(f"\n  Feature stats (first jet, first 5 constituents):")
-    print(f"  {'Feature':<20}  {'Min':>8}  {'Max':>8}  {'Mean':>8}")
-    print(f"  {'-'*50}")
-    for i, fname in enumerate(FEATURES):
-        vals = X[:, :, i].flatten()
-        print(f"  {fname:<20}  {vals.min():>8.3f}  "
-              f"{vals.max():>8.3f}  {vals.mean():>8.3f}")
+        train_l, val_l, test_l, sample_shape = get_jet_dataloaders(
+            n_train=500, n_val=100, n_test=100,
+            mode='sequence', top_k=20, batch_size=32,
+            data_dir='synthetic'
+        )
+        print(f"\n  Sample shape per jet: {sample_shape}  (top_k=20, n_features={N_FEATURES})")
 
-    print("DataLoaders")
-
-    train_l, val_l, test_l, sample_shape = get_jet_dataloaders(
-        n_train=500, n_val=100, n_test=100,
-        mode='sequence', top_k=20, batch_size=32
-    )
-
-    print(f"\n  Sample shape per jet: {sample_shape}  "
-          f"(top_k={20}, n_features={N_FEATURES})")
-    print(f"  Train batches: {len(train_l)}")
-    print(f"  Val   batches: {len(val_l)}")
-    print(f"  Test  batches: {len(test_l)}")
-
-    xb, yb = next(iter(train_l))
-    print(f"\n  First batch:")
-    print(f"    X: {xb.shape}  y: {yb.shape}")
-    print(f"    Label distribution: {yb.sum().item()} top / "
-          f"{(yb==0).sum().item()} QCD")
-
-    print("DONE — data_loader.py")
-    print("""
-  For real data:
-    Download from https://zenodo.org/record/2603256
-    Place train.h5, val.h5, test.h5 in phase6_hep_papers/data/
-    Replace generate_synthetic_jets() with h5py loader
-    """)
+    print("\nDONE — data_loader.py")

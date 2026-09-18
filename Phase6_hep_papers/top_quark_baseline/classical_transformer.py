@@ -94,7 +94,7 @@ print("Data")
 # Real Zenodo dataset (train.h5, val.h5, test.h5) — set DATA_DIR to use it.
 # Input features for real data: E, PX, PY, PZ, pT  (5 features, col index 0-4)
 # Input features for synthetic:  14 features (N_FEATURES from data_loader)
-DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')   # Phase6_hep_papers/data/
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))   # Phase6_hep_papers/data/
 USE_REAL  = os.path.isdir(DATA_DIR) and os.path.isfile(os.path.join(DATA_DIR, 'train.h5'))
 
 if USE_REAL:

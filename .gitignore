@@ -16,3 +16,5 @@ data/raw/
 *.npy
 wandb/
 Implementation_Plan_Claude.md
+*.h5
+Phase6_hep_papers/data/

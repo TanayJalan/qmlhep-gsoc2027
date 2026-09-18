@@ -4,9 +4,9 @@
 | Phase 2: PyTorch | ✅ Completed | CNN >80% CIFAR-10 | 2nd Sep 2026 |
 | Phase 3: Transformers | ✅ Completed | Mini-ViT on MNIST | 9th Sep 2026 |
 | Phase 4: Quantum basics | ✅ Completed | Bell state + VQC | 14th Sep 2026 |
-| Phase 5: PennyLane | 🔄 In Progress | Hybrid Iris classifier | — |
-| Phase 6: HEP papers | ⬜ Not started | Reproduce baseline | — |
-| Phase 7: QVIT prototype | ⬜ Not started | Working QVIT | — |
+| Phase 5: PennyLane | ✅ Completed | Hybrid Iris classifier | 17th Sep 2026 |
+| Phase 6: HEP papers | ✅ Completed | Reproduce baseline | 19th Sep 2026 |
+| Phase 7: QVIT prototype | 🔄 In Progress | Working QVIT | — |
 | Task I | ⬜ Not started | Both circuits submitted | — |
 | Task II | ⬜ Not started | 2 GNN architectures | — |
 | Task III | ⬜ Not started | Commentary written | — |

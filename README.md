@@ -6,8 +6,8 @@
 | Phase 4: Quantum basics | ✅ Completed | Bell state + VQC | 14th Sep 2026 |
 | Phase 5: PennyLane | ✅ Completed | Hybrid Iris classifier | 17th Sep 2026 |
 | Phase 6: HEP papers | ✅ Completed | Reproduce baseline | 19th Sep 2026 |
-| Phase 7: QVIT prototype | 🔄 In Progress | Working QVIT | — |
-| Task I | ⬜ Not started | Both circuits submitted | — |
+| Phase 7: QVIT prototype | ✅ Completed | Working QVIT | 18th Oct 2026 |
+| Task I | 🔄 In Progress | Both circuits submitted | — |
 | Task II | ⬜ Not started | 2 GNN architectures | — |
 | Task III | ⬜ Not started | Commentary written | — |
 | Task VIII | ⬜ Not started | ViT + QVIT design | — |

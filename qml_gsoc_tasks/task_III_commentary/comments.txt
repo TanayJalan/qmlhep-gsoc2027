@@ -1,0 +1,36 @@
+I intend to discuss VQC and PennyLane as this is what I have dealt with.
+I will also mention at the beginning what I do not understand.
+I find this more useful than making it seem like I know everything.
+What took me by surprise in relation to VQC was not the circuits but the gradient.
+In deep learning, the autograd algorithm traverses the computation graph while applying the chain rule.
+That's simple enough. However, the problem with a quantum circuit running on hardware or even just a simulator is that it is a black box.
+
+This is where the parameter shift rule comes in. The idea is simple enough; for any rotation gate with rotation parameter θ,
+the gradient will be precisely the difference between two forward computations: increase θ by π/2, decrease it by π/2, 
+take the difference, divide by 2. There is no need for an approximation, and we get the exact derivative of the circuit's output 
+with respect to that single parameter. Before implementing PennyLane's built-in parameter shift rule, 
+I had hand-coded my own implementation for a custom autograd function, so the automation didn't seem too magical at all.
+Of course, the price tag of such precision is not negligible either. With two forward evaluations per single parameter, 
+a circuit with 36 parameters requires 72 circuit evaluations for each gradient evaluation step. Compare this to backpropagation, 
+which requires only 2 forward evaluations irrespective of the number of parameters. Training quantum circuits takes time because of this, 
+which makes efforts to maintain their small size well justified.
+PennyLane is the software package that I am most familiar with. Why I like it is because in it, 
+quantum circuits are nothing more than regular differentiable functions. Define a QNode, then wrap it with TorchLayer
+
+One thing I figured out myself that wasn't in any tutorial: the activation function before your angle embedding matters a lot. 
+I was using Tanh to squash inputs, which keeps them in (-1, 1). But AngleEmbedding treats these as rotation angles in radians. 
+Tanh was restricting my circuit to a tiny slice of the Bloch sphere — roughly ±57 degrees out of 360. Removing the Tanh and clipping to [-π, π] directly improved 
+my hybrid classifier accuracy noticeably. The interface between classical preprocessing and quantum encoding is underrated in most QML papers.
+
+The area that I wish to improve on is quantum attention. Specifically, using quantum circuits as an alternative to the linear projections (W_Q, W_K, W_V) involved 
+in computing the attention mechanism of a transformer. It involves encoding a token embedding as rotation angles, using it to perform parameterized gates on an 
+entangled quantum state and then computing expectation values, the attention scores being computed in a classical manner using the results of those operations.
+
+A working prototype of such an attention mechanism exists in my codebase as applied to the MNIST dataset. The question that I wish to investigate with regards
+to the said prototype is whether the quantum attention mechanism achieves something that cannot be achieved with a classical linear transformation layer 
+of similar parameter size. MNIST is unlikely to have such questions arise since the dataset is too neat to be considered challenging. The dataset of jets in particle physics,
+however, where jets consist of multi-particle substructure, likely does.
+
+One thing that I have to figure out is noise. The only things that I worked on so far were noiseless simulators. In real devices, however, depolarisation noise deteriorates gradients,
+causing instability of training process. I have read about two approaches to deal with this – zero-noise extrapolation and probabilistic error correction.
+However, I never tried implementing any of them. If QVIT can only be trained in simulators, my project does not have much practical significance.
